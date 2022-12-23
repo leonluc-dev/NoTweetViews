@@ -3,8 +3,9 @@ on:
  push:
     tags:
       - v*
+
 env:
- FINAL_ZIP_NAME: ${{ format('dist/RemoveTwitterViews-{0}.zip', ${{github.ref_name}}) }}
+ FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
 
 jobs:
   publish:
@@ -18,13 +19,14 @@ jobs:
         uses: thedoctor0/zip-release@main
         with:
          type: 'zip'
-         filename: $FINAL_ZIP_NAME
+         filename: ${{ env.FINAL_ZIP_NAME }}
+         exclusions: '*.git* *.github*'
        
       - name: Upload extension
         uses: mnao305/chrome-extension-upload@v4.0.0
         with:
-         file-path: $FINAL_ZIP_NAME
-         extension-id: idndmhfalcddnfpafjkkjocmpoofgdbl
+         file-path: ${{ env.FINAL_ZIP_NAME }}
+         extension-id: ${{ secrets.CHROME_WEB_EXTENSION_ID }}
          client-id: ${{ secrets.CHROME_WEB_CLIENT_ID }}
          client-secret: ${{ secrets.CHROME_WEB_CLIENT_SECRET }}
          refresh-token: ${{ secrets.CHROME_WEB_REFRESH_TOKEN }}
