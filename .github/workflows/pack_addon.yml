@@ -17,7 +17,7 @@ on:
 
 env:
  FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
- ARTIFACT_NAME: ${{ format('packed-addon-{0}-{1}', ${{ inputs.addonType }}, github.ref_name) }}
+ ARTIFACT_NAME: ${{ format('packed-addon-{0}-{1}', inputs.addonType, github.ref_name) }}
 
 jobs:
   pack:
