@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Rename manifest file
-        run: mv manifest.${{ addonType }}.json manifest.json
+        run: mv manifest.${{ inputs.addonType }}.json manifest.json
         
       - name: Get version info
         id: get-version-info
