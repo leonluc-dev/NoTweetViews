@@ -36,8 +36,8 @@ jobs:
           secret: ${{ secrets.FIREFOX_GALLERY_API_SECRET }}
           payload: > 
             {
-              "iat": "${{ steps.date.outputs.issueDate }}",
-              "exp": "${{ steps.date.outputs.expDate }}",
+              "iat": ${{ steps.date.outputs.issueDate }},
+              "exp": ${{ steps.date.outputs.expDate }},
               "jti": "${{ env.RUN_IDENTIFIER }}",
               "iss": "${{ secrets.FIREFOX_GALLERY_API_KEY }}"
             }
