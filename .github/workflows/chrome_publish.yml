@@ -19,17 +19,13 @@ jobs:
       - name: Download packed addon artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ format('packed-addon-{0}', github.ref_name) }}
+          name: ${{ needs.pack-addon.outputs.artifactName }}
           path: packed-addon
-          
-      - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: packed-addon
           
       - name: Upload extension
         uses: mnao305/chrome-extension-upload@v4.0.0
         with:
-         file-path: ${{ needs.pack-addon.outputs.packFileName }}
+         file-path: ${{ format("packed-addon/{0}", needs.pack-addon.outputs.zipFileName) }}
          extension-id: ${{ secrets.CHROME_WEB_EXTENSION_ID }}
          client-id: ${{ secrets.CHROME_WEB_CLIENT_ID }}
          client-secret: ${{ secrets.CHROME_WEB_CLIENT_SECRET }}
