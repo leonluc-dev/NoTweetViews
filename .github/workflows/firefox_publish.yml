@@ -39,10 +39,8 @@ jobs:
               "iat": "${{ steps.date.outputs.issueDate }}",
               "exp": "${{ steps.date.outputs.expDate }}",
               "jti": "${{ env.RUN_IDENTIFIER }}",
-              "iss": "${{ secrets.FIREFOX_GALLERY_API_SECRET }}"
+              "iss": "${{ secrets.FIREFOX_GALLERY_API_KEY }}"
             }
-            
-      - run: echo ${{ steps.jwt-token-generate.outputs.token }}
 
       - name: Upload firefox addon
         id: firefox-upload-request
