@@ -32,7 +32,7 @@ jobs:
         with:
            file: manifest.json
            field: description
-           value: ${{ github.ref_name#v } #Remove v prefix from version
+           value: ${{ github.ref_name#v }} #Remove v prefix from version
       
       - name: Archive Release
         uses: thedoctor0/zip-release@main
