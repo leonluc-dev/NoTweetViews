@@ -28,7 +28,7 @@ jobs:
         run: mv manifest.${{ inputs.addonType }}.json manifest.json
       
       - name: Get version number from tag
-        run: > 
+        run: | 
             "ADDON_TAG=${{ github.ref_name }};
             echo 'ADDON_VERSION_NAME=${ADDON_TAG#v}' >> $GITHUB_ENV"
       - name: Update manifest.json version
