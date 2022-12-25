@@ -35,7 +35,9 @@ jobs:
         id: firefox-upload-request
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "https://addons.mozilla.org/api/v5/api/v5/addons/upload/"
+          url: "https://addons.mozilla.org/api/v5/addons/upload"
           method: 'POST'
           bearerToken: ${{ steps.jwt-token-generate.outputs.jwt }}
           contentType: multipart/form-data
+          data: '{ "channel ": "listed" }'
+          files: '{ "upload": "packed-addon-artifact/${{ needs.pack-addon.outputs.zipFileName }}" }'
