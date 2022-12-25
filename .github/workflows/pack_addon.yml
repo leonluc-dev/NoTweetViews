@@ -7,12 +7,23 @@ on:
         description: "The addon type to build. Can be either 'firefox' or 'chrome'"
         required: true
         type: string
+    outputs:
+      artifactName:
+        description: "The name of the resulting artifact"
+        value: ${{ jobs.pack.outputs.artifactName }}
+      zipFileName:
+        description: "The name of the zip file in the artifact"
+        value: ${{ jobs.pack.outputs.zipFileName }}
 
 env:
  FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
+ ARTIFACT_NAME: ${{ format('packed-addon-{0}-{1}', ${{ inputs.addonType }}, github.ref_name) }}
 
 jobs:
   pack:
+    outputs:
+      artifactName: ${{ steps.set-outputs.outputs.artifactName }}
+      zipFileName: ${{ steps.set-outputs.outputs.zipFileName }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -48,7 +59,14 @@ jobs:
          filename: ${{ env.FINAL_ZIP_NAME }}
          exclusions: '*.git* *.github* manifest.*.json LICENSE README.md'
          
-      - uses: actions/upload-artifact@v3
+      - name: Upload release as artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: ${{ format('packed-addon-{0}', github.ref_name) }}
+          name: ${{ env.ARTIFACT_NAME }}
           path: ${{ env.FINAL_ZIP_NAME }}
+          
+      - name: Set outputs
+        id: set-outputs
+        run: | 
+              "echo 'zipFileName=$FINAL_ZIP_NAME' >> $GITHUB_OUTPUT
+               echo 'artifactName=$ARTIFACT_NAME' >> $GITHUB_OUTPUT"
