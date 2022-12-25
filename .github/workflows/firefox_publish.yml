@@ -1,0 +1,24 @@
+name: Publish to Firefox Addon Gallery
+
+on:
+  push:
+    tags:
+      - v*
+      
+jobs:
+  pack-addon:
+    pack-firefox-addon:
+      uses: ./.github/workflows/pack_addon.yml
+      with:
+        addonType: 'firefox'
+  publish:
+    runs-on: ubuntu-latest
+    needs: pack-addon
+    steps:
+      - uses: trmcnvn/firefox-addon@v1
+        with:
+          uuid: ${{ secrets.FIREFOX_GALLERY_UUID }}
+          xpi: ${{ needs.pack-addon.outputs.packFileName }}
+          manifest: manifest.json
+          api-key: ${{ secrets.FIREFOX_GALLERY_API_KEY }}
+          api-secret: ${{ secrets.FIREFOX_GALLERY_API_SECRET }}
