@@ -29,8 +29,8 @@ jobs:
       
       - name: Get version number from tag
         run: > 
-            "ADDON_VERSION_NAME=${{ github.ref_name }};
-            echo "ADDON_VERSION_NAME=${ADDON_VERSION_NAME#v}" >> $GITHUB_ENV"
+            "ADDON_TAG=${{ github.ref_name }};
+            echo "::set-env name=ADDON_VERSION_NAME::${ADDON_TAG#v}"
       - name: Update manifest.json version
         uses: jossef/action-set-json-field@v2
         with:
