@@ -10,7 +10,7 @@ on:
 jobs:
   pack-addon:
     pack-chrome-addon:
-      uses: ./.github/workflows/pack_addon.yml
+      uses: ./pack_addon.yml
       with:
         addonType: 'chrome'
   publish:
