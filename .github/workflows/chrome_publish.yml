@@ -5,6 +5,8 @@ on:
     tags:
       - v*
 
+  workflow_dispatch:
+
 jobs:
   pack-addon:
     pack-chrome-addon:
