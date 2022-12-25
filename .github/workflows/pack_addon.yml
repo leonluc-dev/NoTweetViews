@@ -68,5 +68,5 @@ jobs:
       - name: Set outputs
         id: set-outputs
         run: | 
-              "echo 'zipFileName=$FINAL_ZIP_NAME' >> $GITHUB_OUTPUT
-               echo 'artifactName=$ARTIFACT_NAME' >> $GITHUB_OUTPUT"
+               echo "zipFileName=$FINAL_ZIP_NAME" >> $GITHUB_OUTPUT
+               echo "artifactName=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
