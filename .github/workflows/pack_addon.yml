@@ -26,13 +26,17 @@ jobs:
         
       - name: Rename manifest file
         run: mv manifest.${{ inputs.addonType }}.json manifest.json
-        
+      
+      - name: Get version number from tag
+        run: > 
+            "ADDON_VERSION_NAME=${{ github.ref_name }};
+            echo "ADDON_VERSION_NAME=${ADDON_VERSION_NAME#v}" >> $GITHUB_ENV"
       - name: Update manifest.json version
         uses: jossef/action-set-json-field@v2
         with:
            file: manifest.json
            field: description
-           value: ${{ github.ref_name#v }} #Remove v prefix from version
+           value: ${{ env.ADDON_VERSION_NAME }} #Remove v prefix from version
       
       - name: Archive Release
         uses: thedoctor0/zip-release@main
