@@ -7,10 +7,6 @@ on:
         description: "The addon type to build. Can be either 'firefox' or 'chrome'"
         required: true
         type: string
-    outputs:
-      packFileName:
-        description: "The filename of the packed addon"
-        value: ${{ jobs.pack.outputs.archiveFileName }}
 
 env:
  FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
@@ -18,8 +14,6 @@ env:
 jobs:
   pack:
     runs-on: ubuntu-latest
-    outputs:
-      archiveFileName: ${{ steps.archiveOutput.outputs.archiveFileName }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -54,6 +48,7 @@ jobs:
          filename: ${{ env.FINAL_ZIP_NAME }}
          exclusions: '*.git* *.github* manifest.*.json LICENSE README.md'
          
-      - name: Set packFileName output
-        id: 'archiveOutput'
-        run: echo "archiveFileName=$FINAL_ZIP_NAME" >> $GITHUB_OUTPUT
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ format('packed-addon-{0}', github.ref_name) }}
+          path: ${{ env.FINAL_ZIP_NAME }}
