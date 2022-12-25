@@ -21,10 +21,21 @@ jobs:
           name: ${{ needs.pack-addon.outputs.artifactName }}
           path: packed-addon-artifact
     
-      - uses: trmcnvn/firefox-addon@v1
+      - name: Generate JWT token
+        id: jwt-token-generate
+        uses: morzzz007/github-actions-jwt-generator@1.0.1
         with:
-          uuid: ${{ secrets.FIREFOX_GALLERY_UUID }}
-          xpi: ${{ format('packed-addon-artifact/{0}', needs.pack-addon.outputs.zipFileName) }}
-          manifest: manifest.json
-          api-key: ${{ secrets.FIREFOX_GALLERY_API_KEY }}
-          api-secret: ${{ secrets.FIREFOX_GALLERY_API_SECRET }}
+          secret: ${{ secrets.FIREFOX_GALLERY_API_SECRET }}
+          payload: > 
+            {
+              "iss": "${{ secrets.FIREFOX_GALLERY_API_SECRET }}"
+            }
+
+      - name: Upload firefox addon
+        id: firefox-upload-request
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "https://addons.mozilla.org/api/v5/api/v5/addons/upload/"
+          method: 'POST'
+          bearerToken: ${{ steps.jwt-token-generate.outputs.jwt }}
+          contentType: multipart/form-data
