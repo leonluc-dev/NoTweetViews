@@ -6,6 +6,8 @@ on:
       - v*
 
   workflow_dispatch:
+env:
+  RUN_IDENTIFIER: run-${{ github.run_id }}-${{ github.run_attempt }}
 jobs:
   pack-addon:
     uses: ./.github/workflows/pack_addon.yml
@@ -21,6 +23,12 @@ jobs:
           name: ${{ needs.pack-addon.outputs.artifactName }}
           path: packed-addon-artifact
     
+      - name: Get JWT issue and expiration date
+        id: date
+        run: |
+          echo "issueDate=$(date -u +%s)" >> $GITHUB_OUTPUT
+          echo "expDate=$(date -d '+4 minutes' -u +%s)" >> $GITHUB_OUTPUT
+    
       - name: Generate JWT token
         id: jwt-token-generate
         uses: morzzz007/github-actions-jwt-generator@1.0.1
@@ -28,6 +36,9 @@ jobs:
           secret: ${{ secrets.FIREFOX_GALLERY_API_SECRET }}
           payload: > 
             {
+              "iat": "${{ steps.date.outputs.issueDate }}",
+              "exp": "${{ steps.date.outputs.expDate }}",
+              "jti": "${{ env.RUN_IDENTIFIER }}",
               "iss": "${{ secrets.FIREFOX_GALLERY_API_SECRET }}"
             }
 
