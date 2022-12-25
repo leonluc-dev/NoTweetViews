@@ -1,11 +1,11 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "No Tweet Views",
   "version": "0.1",
   "author": "Gameleon",
   "description": "Removes the views indicator from tweets",
   "icons": {
-	"48": "icons/icon48.png"
+    "48": "icons/icon48.png"
   },
   "content_scripts": [
     {

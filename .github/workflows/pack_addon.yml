@@ -1,0 +1,46 @@
+name: Pack addon
+
+on:
+  workflow_call:
+    inputs:
+      addonType:
+        description: "The addon type to build. Can be either 'firefox' or 'chrome'"
+        required: true
+        type: string
+    outputs:
+      packFileName:
+        description: "The filename of the packed addon"
+        value: ${{ jobs.pack.outputs.archiveFileName }}
+
+env:
+ FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    outputs:
+      archiveFileName: ${{ steps.archiveOutput.outputs.archiveFileName }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Rename manifest file
+        run: mv manifest.${{ addonType }}.json manifest.json
+        
+      - name: Update manifest.json version
+        uses: jossef/action-set-json-field@v2
+        with:
+           file: manifest.json
+           field: description
+           value: ${{ github.ref_name#v } #Remove v prefix from version
+      
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+         type: 'zip'
+         filename: ${{ env.FINAL_ZIP_NAME }}
+         exclusions: '*.git* *.github* manifest.*.json'
+         
+      - name: Set packFileName output
+        id: 'archiveOutput'
+        run: echo "archiveFileName=$FINAL_ZIP_NAME" >> $GITHUB_OUTPUT

@@ -1,33 +1,27 @@
 name: Publish to Chrome Web Store
+
 on:
- push:
+  push:
     tags:
       - v*
 
-env:
- FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
+  workflow_dispatch:
 
 jobs:
+  pack-addon:
+    uses: ./.github/workflows/pack_addon.yml
+    with:
+      addonType: 'chrome'
   publish:
     runs-on: ubuntu-latest
-    
+    needs: pack-addon
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      
-      - name: Archive Release
-        uses: thedoctor0/zip-release@main
-        with:
-         type: 'zip'
-         filename: ${{ env.FINAL_ZIP_NAME }}
-         exclusions: '*.git* *.github*'
-       
       - name: Upload extension
         uses: mnao305/chrome-extension-upload@v4.0.0
         with:
-         file-path: ${{ env.FINAL_ZIP_NAME }}
+         file-path: ${{ needs.pack-addon.outputs.packFileName }}
          extension-id: ${{ secrets.CHROME_WEB_EXTENSION_ID }}
          client-id: ${{ secrets.CHROME_WEB_CLIENT_ID }}
          client-secret: ${{ secrets.CHROME_WEB_CLIENT_SECRET }}
          refresh-token: ${{ secrets.CHROME_WEB_REFRESH_TOKEN }}
-         publish: true
+         publish: false
