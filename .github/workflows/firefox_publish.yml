@@ -41,6 +41,8 @@ jobs:
               "jti": "${{ env.RUN_IDENTIFIER }}",
               "iss": "${{ secrets.FIREFOX_GALLERY_API_SECRET }}"
             }
+            
+      - run: echo ${{ steps.jwt-token-generate.outputs.token }}
 
       - name: Upload firefox addon
         id: firefox-upload-request
