@@ -9,10 +9,9 @@ on:
 
 jobs:
   pack-addon:
-    pack-chrome-addon:
-      uses: ./pack_addon.yml
-      with:
-        addonType: 'chrome'
+    uses: ./.github/workflows/pack_addon.yml
+    with:
+      addonType: 'chrome'
   publish:
     runs-on: ubuntu-latest
     needs: pack-addon
