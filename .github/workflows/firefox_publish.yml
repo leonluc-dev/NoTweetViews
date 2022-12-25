@@ -15,10 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: pack-addon
     steps:
+      - name: Download packed addon artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ needs.pack-addon.outputs.artifactName }}
+          path: packed-addon-artifact
+    
       - uses: trmcnvn/firefox-addon@v1
         with:
           uuid: ${{ secrets.FIREFOX_GALLERY_UUID }}
-          xpi: ${{ needs.pack-addon.outputs.packFileName }}
+          xpi: ${{ format('packed-addon-artifact/{0}', needs.pack-addon.outputs.zipFileName) }}
           manifest: manifest.json
           api-key: ${{ secrets.FIREFOX_GALLERY_API_KEY }}
           api-secret: ${{ secrets.FIREFOX_GALLERY_API_SECRET }}
