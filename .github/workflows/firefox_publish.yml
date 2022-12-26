@@ -45,12 +45,24 @@ jobs:
         id: firefox-upload-request
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "https://addons.mozilla.org/api/v5/addons/upload"
+          url: "https://addons.mozilla.org/api/v5/addons/upload/"
           method: 'POST'
           customHeaders: '{"Authorization": "JWT ${{ steps.jwt-token-generate.outputs.token }}" }'
           contentType: multipart/form-data
           data: '{ "channel": "listed" }'
           files: '{ "upload": "packed-addon-artifact/${{ needs.pack-addon.outputs.zipFileName }}" }'
+          
+      - name: Wait for upload validation
+        id: firefox-validation-request
+        uses: mydea/action-wait-for-api@v1
+        with:
+          url: ${{ fromJson(steps.firefox-upload-request.outputs.response).url }}
+          method: 'GET'
+          headers: '{"Authorization" : "JWT ${{ steps.jwt-token-generate.outputs.token }}" }'
+          expected-response-field: "processed"
+          expected-response-field-value: "true"
+          timeout: 300
+          interval: 5
 
       - name: Create new addon version
         id: firefox-version-request
@@ -60,4 +72,4 @@ jobs:
           method: 'POST'
           customHeaders: '{"Authorization": "JWT ${{ steps.jwt-token-generate.outputs.token }}" }'
           contentType: application/json
-          data: '{ "upload": "${{ fromJson(steps.firefox-upload-request.outputs.response).results[0].uuid }}" }'
+          data: '{ "upload": "${{ fromJson(steps.firefox-upload-request.outputs.response).uuid }}" }'

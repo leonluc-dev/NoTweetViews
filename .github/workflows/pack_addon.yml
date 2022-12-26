@@ -57,7 +57,8 @@ jobs:
         uses: thedoctor0/zip-release@main
         with:
          type: 'zip'
-         path: src
+         directory: src
+         path: .
          filename: ${{ env.FINAL_ZIP_NAME }}
          exclusions: '*.git* *.github* manifest.*.json LICENSE README.md'
 
@@ -65,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ env.FINAL_ZIP_NAME }}
+          path: src/${{ env.FINAL_ZIP_NAME }}
           
       - name: Set outputs
         id: set-outputs
