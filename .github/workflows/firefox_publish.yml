@@ -61,4 +61,4 @@ jobs:
           method: 'POST'
           customHeaders: '{"Authorization": "JWT ${{ steps.jwt-token-generate.outputs.token }}" }'
           contentType: application/json
-          data: '{ "upload": "${{ fromJson(steps.firefox-upload-request.outputs.response).results[0].uuid }}" }'
+          data: ${{ format('{ "upload": "{0}" }', fromJson(steps.firefox-upload-request.outputs.response).results[0].uuid ) }}
