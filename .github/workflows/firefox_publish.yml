@@ -52,3 +52,13 @@ jobs:
           contentType: multipart/form-data
           data: '{ "channel ": "listed" }'
           files: '{ "upload": "packed-addon-artifact/${{ needs.pack-addon.outputs.zipFileName }}" }'
+
+      - name: Create new addon version
+        id: firefox-version-request
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "https://addons.mozilla.org/api/v5/addons/addon/${{ secrets.FIREFOX_GALLERY_ADDON_IDENTIFIER }}/versions/"
+          method: 'POST'
+          customHeaders: '{"Authorization": "JWT ${{ steps.jwt-token-generate.outputs.token }}" }'
+          contentType: application/json
+          data: '{ "upload": "${{ fromJson(steps.firefox-upload-request.outputs.response).uuid }}" }'
