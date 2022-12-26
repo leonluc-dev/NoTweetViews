@@ -30,6 +30,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Rename manifest file
+        working-directory: src
         run: mv manifest.${{ inputs.addonType }}.json manifest.json
         
       - name: Get version info
@@ -40,7 +41,7 @@ jobs:
         uses: jossef/action-set-json-field@v2
         if: ${{ steps.get-version-info.outputs.is-semver }}
         with:
-           file: manifest.json
+           file: src/manifest.json
            field: version
            value: ${{ format('{0}.{1}.{2}', steps.get-version-info.outputs.major, steps.get-version-info.outputs.minor, steps.get-version-info.outputs.patch) }}
            
@@ -48,7 +49,7 @@ jobs:
         uses: jossef/action-set-json-field@v2
         if: ${{ steps.get-version-info.outputs.is-semver }}
         with:
-           file: manifest.json
+           file: src/manifest.json
            field: version_name
            value: ${{ steps.get-version-info.outputs.version-without-v }}
       
@@ -56,6 +57,7 @@ jobs:
         uses: thedoctor0/zip-release@main
         with:
          type: 'zip'
+         path: src
          filename: ${{ env.FINAL_ZIP_NAME }}
          exclusions: '*.git* *.github* manifest.*.json LICENSE README.md'
 
