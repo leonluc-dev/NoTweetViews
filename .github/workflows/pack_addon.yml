@@ -58,7 +58,7 @@ jobs:
          type: 'zip'
          filename: ${{ env.FINAL_ZIP_NAME }}
          exclusions: '*.git* *.github* manifest.*.json LICENSE README.md'
-         
+
       - name: Upload release as artifact
         uses: actions/upload-artifact@v3
         with:
