@@ -49,7 +49,7 @@ jobs:
           method: 'POST'
           customHeaders: '{"Authorization": "JWT ${{ steps.jwt-token-generate.outputs.token }}" }'
           contentType: multipart/form-data
-          data: '{ "channel ": "listed" }'
+          data: '{ "channel": "listed" }'
           files: '{ "upload": "packed-addon-artifact/${{ needs.pack-addon.outputs.zipFileName }}" }'
 
       - name: Create new addon version
