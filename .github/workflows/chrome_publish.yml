@@ -28,4 +28,4 @@ jobs:
          client-id: ${{ secrets.CHROME_WEB_CLIENT_ID }}
          client-secret: ${{ secrets.CHROME_WEB_CLIENT_SECRET }}
          refresh-token: ${{ secrets.CHROME_WEB_REFRESH_TOKEN }}
-         publish: false
+         publish: true
