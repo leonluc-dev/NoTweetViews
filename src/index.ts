@@ -9,7 +9,7 @@ const tweetViewsSelectors = [
   viewCounterListSelector,
 ];
 
-let observer = new MutationObserver((mutations) => {
+const observer = new MutationObserver((mutations) => {
   const allAddedNodes = mutations.flatMap((x) =>
     Array.from(x.addedNodes ?? [])
   );
