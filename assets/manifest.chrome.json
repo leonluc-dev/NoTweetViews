@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "No Tweet Views",
   "version": "0.1.1",
   "author": "Gameleon",
@@ -9,10 +9,8 @@
   },
   "content_scripts": [
     {
-      "js": [ "scripts/jquery-3.6.3.min.js", "index.js"],
-      "matches": [
-        "https://twitter.com/*"
-      ]
+      "js": ["scripts/jquery-3.6.3.min.js", "index.js"],
+      "matches": ["https://twitter.com/*"]
     }
   ]
 }
