@@ -16,8 +16,8 @@ on:
         value: ${{ jobs.pack.outputs.zipFileName }}
 
 env:
- FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
- ARTIFACT_NAME: ${{ format('packed-addon-{0}-{1}', inputs.addonType, github.ref_name) }}
+  FINAL_ZIP_NAME: ${{ format('RemoveTwitterViews-{0}.zip', github.ref_name) }}
+  ARTIFACT_NAME: ${{ format('packed-addon-{0}-{1}', inputs.addonType, github.ref_name) }}
 
 jobs:
   pack:
@@ -28,48 +28,48 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
+
       - name: Rename manifest file
         working-directory: src
         run: mv manifest.${{ inputs.addonType }}.json manifest.json
-        
+
       - name: Get version info
         id: get-version-info
         uses: battila7/get-version-action@v2
-             
+
       - name: Update manifest.json version
         uses: jossef/action-set-json-field@v2
         if: ${{ steps.get-version-info.outputs.is-semver }}
         with:
-           file: src/manifest.json
-           field: version
-           value: ${{ format('{0}.{1}.{2}', steps.get-version-info.outputs.major, steps.get-version-info.outputs.minor, steps.get-version-info.outputs.patch) }}
-           
+          file: src/manifest.json
+          field: version
+          value: ${{ format('{0}.{1}.{2}', steps.get-version-info.outputs.major, steps.get-version-info.outputs.minor, steps.get-version-info.outputs.patch) }}
+
       - name: Update manifest.json version name
         uses: jossef/action-set-json-field@v2
         if: ${{ steps.get-version-info.outputs.is-semver }}
         with:
-           file: src/manifest.json
-           field: version_name
-           value: ${{ steps.get-version-info.outputs.version-without-v }}
-      
+          file: src/manifest.json
+          field: version_name
+          value: ${{ steps.get-version-info.outputs.version-without-v }}
+
       - name: Archive Release
         uses: thedoctor0/zip-release@main
         with:
-         type: 'zip'
-         directory: src
-         path: .
-         filename: ${{ env.FINAL_ZIP_NAME }}
-         exclusions: '*.git* *.github* manifest.*.json LICENSE README.md'
+          type: "zip"
+          directory: src
+          path: .
+          filename: ${{ env.FINAL_ZIP_NAME }}
+          exclusions: "*.git* *.github* manifest.*.json LICENSE README.md"
 
       - name: Upload release as artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: src/${{ env.FINAL_ZIP_NAME }}
-          
+
       - name: Set outputs
         id: set-outputs
-        run: | 
-               echo "zipFileName=$FINAL_ZIP_NAME" >> $GITHUB_OUTPUT
-               echo "artifactName=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+        run: |
+          echo "zipFileName=$FINAL_ZIP_NAME" >> $GITHUB_OUTPUT
+          echo "artifactName=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
