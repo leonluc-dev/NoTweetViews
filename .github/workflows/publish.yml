@@ -4,17 +4,37 @@ on:
   push:
     tags:
       - v*
-
+  workflow_dispatch:
 env:
   RUN_IDENTIFIER: run-${{ github.run_id }}-${{ github.run_attempt }}
 jobs:
-  pack-addon:
-    uses: ./.github/workflows/pack_addon.yml
-    with:
-      addonType: "firefox"
+  pack-addons:
+    uses: ubuntu-latest
+    outputs:
+      chromeZipFileName: ${{ steps.pack-project.outputs.chromeZip }}
+      firefoxZipFileName: ${{ steps.pack-project.outputs.firefoxZip }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Use Node.js v16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: v16.x
+
+      - id: install-dependencies
+        run: npm i
+      - id: pack-project
+        run: |
+          PACK_OUTPUT=$(npm run pack)
+          FIREFOX_ZIP_FILE=$(PACK_OUTPUT | awk '/firefox-file: .*\.zip$/{print $NF}')
+          CHROME_ZIP_FILE=$(PACK_OUTPUT | awk '/chrome-file: .*\.zip$/{print $NF}')
+          echo 'firefoxZip=$FIREFOX_ZIP_FILE' > $GITHUB_OUPUT
+          echo 'chromeZip=$CHROME_ZIP_FILE' > $GITHUB_OUPUT
+          
   publish-firefox:
     runs-on: ubuntu-latest
-    needs: pack-addon
+    needs: pack-addons
     steps:
       - name: Download packed addon artifact
         uses: actions/download-artifact@v3
@@ -50,7 +70,7 @@ jobs:
           customHeaders: '{"Authorization": "JWT ${{ steps.jwt-token-generate.outputs.token }}" }'
           contentType: multipart/form-data
           data: '{ "channel": "listed" }'
-          files: '{ "upload": "packed-addon-artifact/${{ needs.pack-addon.outputs.zipFileName }}" }'
+          files: '{ "upload": "packed-addon-artifact/${{ needs.pack-addons.outputs.firefoxZipFileName }}" }'
 
       - name: Wait for upload validation
         id: firefox-validation-request
@@ -75,7 +95,7 @@ jobs:
           data: '{ "upload": "${{ fromJson(steps.firefox-upload-request.outputs.response).uuid }}" }'
   publish-chrome:
     runs-on: ubuntu-latest
-    needs: pack-addon
+    needs: pack-addons
     steps:
       - name: Download packed addon artifact
         uses: actions/download-artifact@v3
@@ -86,7 +106,7 @@ jobs:
       - name: Upload extension
         uses: mnao305/chrome-extension-upload@v4.0.0
         with:
-          file-path: ${{ format('packed-addon-artifact/{0}', needs.pack-addon.outputs.zipFileName) }}
+          file-path: ${{ format('packed-addon-artifact/{0}', needs.pack-addons.outputs.chromeZipFileName) }}
           extension-id: ${{ secrets.CHROME_WEB_EXTENSION_ID }}
           client-id: ${{ secrets.CHROME_WEB_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_WEB_CLIENT_SECRET }}
