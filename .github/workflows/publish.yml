@@ -30,11 +30,11 @@ jobs:
         id: pack-project
         run: |
           PACK_OUTPUT=$(npm run pack)
-          FIREFOX_ZIP_FILE=$(echo $PACK_OUTPUT | awk '/firefox-file: .*\.zip$/{print $NF}')
-          CHROME_ZIP_FILE=$(echo $PACK_OUTPUT | awk '/chrome-file: .*\.zip$/{print $NF}')
+          FIREFOX_ZIP_FILE=$(echo "$PACK_OUTPUT" | awk '/firefox-file: .*\.zip$/{print $NF}')
+          CHROME_ZIP_FILE=$(echo "$PACK_OUTPUT" | awk '/chrome-file: .*\.zip$/{print $NF}')
           echo "firefoxZip=$FIREFOX_ZIP_FILE" >> $GITHUB_OUTPUT
           echo "chromeZip=$CHROME_ZIP_FILE" >> $GITHUB_OUTPUT
-      
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
