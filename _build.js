@@ -32,7 +32,6 @@ const packAddon = (platform) => {
   archive.finalize();
 }
 
-console.log(args);
 if(args[0] === 'pack') {
   packAddon('chrome');
   packAddon('firefox');
