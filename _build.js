@@ -5,9 +5,9 @@ const args = process.argv.slice(2);
 
 const packAddon = (platform) => {
   //Adjust version of manifest.json
-  let manifestContent = JSON.parse(file_system.readFileSync(`dist/manifest.${platform}.json`, 'utf8'));
+  let manifestContent = JSON.parse(file_system.readFileSync(`dist/manifest.json`, 'utf8'));
   manifestContent.version = version;
-  file_system.writeFileSync(`dist/manifest.${platform}.json`, JSON.stringify(manifestContent, null, 2));
+  file_system.writeFileSync(`dist/manifest.json`, JSON.stringify(manifestContent, null, 2));
   
   //Archive dist folder contents
   const archive = archiver('zip');
@@ -25,10 +25,8 @@ const packAddon = (platform) => {
   archive.pipe(output);
 
   archive.glob('**/*', {
-    cwd: 'dist',
-    ignore: ['manifest.*.json']
+    cwd: 'dist'
   });
-  archive.file(`dist/manifest.${platform}.json`, { name: "manifest.json" });
   archive.finalize();
 }
 
